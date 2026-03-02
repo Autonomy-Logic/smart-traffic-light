@@ -1,0 +1,6 @@
+build/
+*.cpp
+*.hpp
+*.o
+*.exe
+.DS_Store
