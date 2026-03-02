@@ -1,11 +1,13 @@
 (* TrafficLight Function Block
    State machine for a standard 3-phase traffic signal.
-   Cycles: RED -> GREEN -> YELLOW -> RED *)
+   Cycles: RED -> GREEN -> YELLOW -> RED
+   Supports night mode with flashing yellow. *)
 
 FUNCTION_BLOCK TrafficLight
   VAR_INPUT
-    enable   : BOOL := TRUE;
-    timing   : PhaseTiming;
+    enable    : BOOL := TRUE;
+    timing    : PhaseTiming;
+    nightMode : BOOL := FALSE;
   END_VAR
 
   VAR_OUTPUT
@@ -16,8 +18,10 @@ FUNCTION_BLOCK TrafficLight
   END_VAR
 
   VAR
-    phaseTimer : TON;
+    phaseTimer      : TON;
+    flashTimer      : TON;
     currentDuration : TIME;
+    flashOn         : BOOL := FALSE;
   END_VAR
 
   METHOD PUBLIC GetState : TrafficState
@@ -32,36 +36,58 @@ FUNCTION_BLOCK TrafficLight
     IsRed := (currentState = TrafficState.RED);
   END_METHOD
 
-  (* Determine the duration for the current phase *)
-  CASE currentState OF
-    TrafficState.RED:
-      currentDuration := timing.redDuration;
-    TrafficState.GREEN:
-      currentDuration := timing.greenDuration;
-    TrafficState.YELLOW:
-      currentDuration := timing.yellowDuration;
-  END_CASE;
+  METHOD PUBLIC IsNightMode : BOOL
+    IsNightMode := nightMode;
+  END_METHOD
 
-  (* Run the phase timer *)
-  phaseTimer(IN := enable, PT := currentDuration);
+  IF nightMode THEN
+    (* Night mode: flash yellow at 1Hz *)
+    flashTimer(IN := TRUE, PT := T#500ms);
+    IF flashTimer.Q THEN
+      flashOn := NOT flashOn;
+      flashTimer(IN := FALSE, PT := T#500ms);
+      flashTimer(IN := TRUE, PT := T#500ms);
+    END_IF;
 
-  (* Transition to the next state when timer expires *)
-  IF phaseTimer.Q THEN
+    redLight    := FALSE;
+    yellowLight := flashOn;
+    greenLight  := FALSE;
+    currentState := TrafficState.YELLOW;
+  ELSE
+    (* Normal operation *)
+    flashOn := FALSE;
+
+    (* Determine the duration for the current phase *)
     CASE currentState OF
       TrafficState.RED:
-        currentState := TrafficState.GREEN;
+        currentDuration := timing.redDuration;
       TrafficState.GREEN:
-        currentState := TrafficState.YELLOW;
+        currentDuration := timing.greenDuration;
       TrafficState.YELLOW:
-        currentState := TrafficState.RED;
+        currentDuration := timing.yellowDuration;
     END_CASE;
-    (* Reset timer for next phase *)
-    phaseTimer(IN := FALSE, PT := currentDuration);
-    phaseTimer(IN := enable, PT := currentDuration);
-  END_IF;
 
-  (* Update output lights based on current state *)
-  redLight    := (currentState = TrafficState.RED);
-  yellowLight := (currentState = TrafficState.YELLOW);
-  greenLight  := (currentState = TrafficState.GREEN);
+    (* Run the phase timer *)
+    phaseTimer(IN := enable, PT := currentDuration);
+
+    (* Transition to the next state when timer expires *)
+    IF phaseTimer.Q THEN
+      CASE currentState OF
+        TrafficState.RED:
+          currentState := TrafficState.GREEN;
+        TrafficState.GREEN:
+          currentState := TrafficState.YELLOW;
+        TrafficState.YELLOW:
+          currentState := TrafficState.RED;
+      END_CASE;
+      (* Reset timer for next phase *)
+      phaseTimer(IN := FALSE, PT := currentDuration);
+      phaseTimer(IN := enable, PT := currentDuration);
+    END_IF;
+
+    (* Update output lights based on current state *)
+    redLight    := (currentState = TrafficState.RED);
+    yellowLight := (currentState = TrafficState.YELLOW);
+    greenLight  := (currentState = TrafficState.GREEN);
+  END_IF;
 END_FUNCTION_BLOCK
