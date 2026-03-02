@@ -3,9 +3,9 @@
    Cycles: RED -> GREEN -> YELLOW -> RED
    Supports night mode with flashing yellow. *)
 
-FUNCTION_BLOCK TrafficLight
+FUNCTION_BLOCK TrafficLight IMPLEMENTS IControllable
   VAR_INPUT
-    enable    : BOOL := TRUE;
+    active    : BOOL := TRUE;
     timing    : PhaseTiming;
     nightMode : BOOL := FALSE;
   END_VAR
@@ -40,6 +40,36 @@ FUNCTION_BLOCK TrafficLight
     IsNightMode := nightMode;
   END_METHOD
 
+  (* IControllable interface methods *)
+  METHOD PUBLIC Enable : BOOL
+    active := TRUE;
+    Enable := TRUE;
+  END_METHOD
+
+  METHOD PUBLIC Disable : BOOL
+    active := FALSE;
+    Disable := TRUE;
+  END_METHOD
+
+  METHOD PUBLIC IsEnabled : BOOL
+    IsEnabled := active;
+  END_METHOD
+
+  METHOD PUBLIC GetStatus : INT
+    (* Status codes: 0=disabled, 1=RED, 2=GREEN, 3=YELLOW, 4=night mode *)
+    IF NOT active THEN
+      GetStatus := 0;
+    ELSIF nightMode THEN
+      GetStatus := 4;
+    ELSIF currentState = TrafficState.RED THEN
+      GetStatus := 1;
+    ELSIF currentState = TrafficState.GREEN THEN
+      GetStatus := 2;
+    ELSE
+      GetStatus := 3;
+    END_IF;
+  END_METHOD
+
   IF nightMode THEN
     (* Night mode: flash yellow at 1Hz *)
     flashTimer(IN := TRUE, PT := T#500ms);
@@ -68,7 +98,7 @@ FUNCTION_BLOCK TrafficLight
     END_CASE;
 
     (* Run the phase timer *)
-    phaseTimer(IN := enable, PT := currentDuration);
+    phaseTimer(IN := active, PT := currentDuration);
 
     (* Transition to the next state when timer expires *)
     IF phaseTimer.Q THEN
@@ -82,7 +112,7 @@ FUNCTION_BLOCK TrafficLight
       END_CASE;
       (* Reset timer for next phase *)
       phaseTimer(IN := FALSE, PT := currentDuration);
-      phaseTimer(IN := enable, PT := currentDuration);
+      phaseTimer(IN := active, PT := currentDuration);
     END_IF;
 
     (* Update output lights based on current state *)

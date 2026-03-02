@@ -24,6 +24,7 @@ jobs:
           mkdir -p build
           strucpp \
             src/DataTypes/TrafficTypes.st \
+            src/Interfaces/IControllable.st \
             src/Functions/TimingUtils.st \
             src/FunctionBlocks/TrafficLight.st \
             src/FunctionBlocks/PedestrianLight.st \
@@ -42,6 +43,7 @@ jobs:
         run: |
           strucpp \
             src/DataTypes/TrafficTypes.st \
+            src/Interfaces/IControllable.st \
             src/FunctionBlocks/TrafficLight.st \
             --test tests/test_traffic_light.st
 
@@ -49,6 +51,7 @@ jobs:
         run: |
           strucpp \
             src/DataTypes/TrafficTypes.st \
+            src/Interfaces/IControllable.st \
             src/FunctionBlocks/TrafficLight.st \
             src/FunctionBlocks/PedestrianLight.st \
             --test tests/test_pedestrian_light.st
@@ -73,3 +76,19 @@ jobs:
             src/DataTypes/TrafficTypes.st \
             src/FunctionBlocks/TrafficLogger.st \
             --test tests/test_traffic_logger.st
+
+      - name: Run night mode tests
+        run: |
+          strucpp \
+            src/DataTypes/TrafficTypes.st \
+            src/Interfaces/IControllable.st \
+            src/FunctionBlocks/TrafficLight.st \
+            --test tests/test_night_mode.st
+
+      - name: Run interface tests
+        run: |
+          strucpp \
+            src/DataTypes/TrafficTypes.st \
+            src/Interfaces/IControllable.st \
+            src/FunctionBlocks/TrafficLight.st \
+            --test tests/test_interface.st

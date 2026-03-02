@@ -79,7 +79,7 @@ TEST 'TrafficLight disabled does not advance'
 
   timing.redDuration := T#100ms;
   light.timing := timing;
-  light.enable := FALSE;
+  light.active := FALSE;
 
   light();
   ADVANCE_TIME(T#200ms);
