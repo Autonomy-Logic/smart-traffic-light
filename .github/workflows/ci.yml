@@ -28,6 +28,7 @@ jobs:
             src/Functions/TimingUtils.st \
             src/FunctionBlocks/TrafficLight.st \
             src/FunctionBlocks/PedestrianLight.st \
+            src/FunctionBlocks/TurnSignalLight.st \
             src/FunctionBlocks/VehicleDetector.st \
             src/FunctionBlocks/TrafficLogger.st \
             src/Programs/IntersectionController.st \
@@ -92,3 +93,12 @@ jobs:
             src/Interfaces/IControllable.st \
             src/FunctionBlocks/TrafficLight.st \
             --test tests/test_interface.st
+
+      - name: Run turn signal tests
+        run: |
+          strucpp \
+            src/DataTypes/TrafficTypes.st \
+            src/Interfaces/IControllable.st \
+            src/FunctionBlocks/TrafficLight.st \
+            src/FunctionBlocks/TurnSignalLight.st \
+            --test tests/test_turn_signal.st
