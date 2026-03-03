@@ -92,3 +92,9 @@ jobs:
             src/Interfaces/IControllable.st \
             src/FunctionBlocks/TrafficLight.st \
             --test tests/test_interface.st
+
+      - name: Run safety validation tests
+        run: |
+          strucpp \
+            src/DataTypes/TrafficTypes.st \
+            --test tests/test_safety_validation.st
