@@ -34,42 +34,42 @@ jobs:
 
       - name: Run data type tests
         run: |
-          strucpp --test \
+          strucpp \
             src/DataTypes/TrafficTypes.st \
-            tests/test_data_types.st
+            --test tests/test_data_types.st
 
       - name: Run traffic light tests
         run: |
-          strucpp --test \
+          strucpp \
             src/DataTypes/TrafficTypes.st \
             src/FunctionBlocks/TrafficLight.st \
-            tests/test_traffic_light.st
+            --test tests/test_traffic_light.st
 
       - name: Run pedestrian light tests
         run: |
-          strucpp --test \
+          strucpp \
             src/DataTypes/TrafficTypes.st \
             src/FunctionBlocks/TrafficLight.st \
             src/FunctionBlocks/PedestrianLight.st \
-            tests/test_pedestrian_light.st
+            --test tests/test_pedestrian_light.st
 
       - name: Run timing utils tests
         run: |
-          strucpp --test \
+          strucpp \
             src/DataTypes/TrafficTypes.st \
             src/Functions/TimingUtils.st \
-            tests/test_timing_utils.st
+            --test tests/test_timing_utils.st
 
       - name: Run vehicle detector tests
         run: |
-          strucpp --test \
+          strucpp \
             src/DataTypes/TrafficTypes.st \
             src/FunctionBlocks/VehicleDetector.st \
-            tests/test_vehicle_detector.st
+            --test tests/test_vehicle_detector.st
 
       - name: Run traffic logger tests
         run: |
-          strucpp --test \
+          strucpp \
             src/DataTypes/TrafficTypes.st \
             src/FunctionBlocks/TrafficLogger.st \
-            tests/test_traffic_logger.st
+            --test tests/test_traffic_logger.st
