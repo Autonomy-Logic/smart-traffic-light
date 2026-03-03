@@ -92,3 +92,12 @@ jobs:
             src/Interfaces/IControllable.st \
             src/FunctionBlocks/TrafficLight.st \
             --test tests/test_interface.st
+
+      - name: Run pedestrian timeout fix tests
+        run: |
+          strucpp \
+            src/DataTypes/TrafficTypes.st \
+            src/Interfaces/IControllable.st \
+            src/FunctionBlocks/TrafficLight.st \
+            src/FunctionBlocks/PedestrianLight.st \
+            --test tests/test_pedestrian_timeout_fix.st

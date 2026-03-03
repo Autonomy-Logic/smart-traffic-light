@@ -71,13 +71,16 @@ FUNCTION_BLOCK PedestrianLight EXTENDS TrafficLight
       END_IF;
     END_IF;
   ELSE
-    (* Not safe to walk — reset to DONT_WALK *)
+    (* Not safe or not requested — reset to DONT_WALK *)
     IF currentState <> TrafficState.RED THEN
-      pedestrianState := PedestrianState.DONT_WALK;
       walkRequest := FALSE;
-      flashCount := 0;
-      flashOn := FALSE;
     END_IF;
+    pedestrianState := PedestrianState.DONT_WALK;
+    flashCount := 0;
+    flashOn := FALSE;
+    (* Reset timers to prevent stale state on next walk cycle *)
+    walkTimer(IN := FALSE, PT := walkDuration);
+    flashTimer(IN := FALSE, PT := T#500ms);
   END_IF;
 
   (* Update pedestrian signal outputs *)
