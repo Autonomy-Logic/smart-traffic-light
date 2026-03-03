@@ -35,6 +35,9 @@ FUNCTION_BLOCK PedestrianLight EXTENDS TrafficLight
     RequestWalk := TRUE;
   END_METHOD
 
+  (* Execute parent TrafficLight state machine first *)
+  SUPER^();
+
   (* Pedestrian signal logic coordinated with traffic state *)
   IF currentState = TrafficState.RED AND walkRequest THEN
     (* Safe to walk when traffic is RED *)
