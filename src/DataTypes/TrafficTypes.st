@@ -12,7 +12,7 @@ TYPE
   PhaseTiming :
     STRUCT
       greenDuration  : TIME := T#30s;
-      yellowDuration : TIME := T#5s;
+      yellowDuration : TIME := T#2s;
       redDuration    : TIME := T#35s;
     END_STRUCT;
 
